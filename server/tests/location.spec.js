@@ -288,4 +288,44 @@ describe('LOCATION API', () => {
         });
     });
   });
+
+  describe('DELETE Location DELETE /api/location', () => {
+
+    it('it should delete a single location successfully', (done) => {
+      superRequest.delete(`/api/location?locationId=${testLocation1.id}`)
+        .set({ 'content-type': 'application/json' })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.status).to.equal('success');
+          expect(res.body.data.message).to
+            .equal('location successfully deleted');
+          expect(res.body.data.location).to.be.empty;
+          done();
+        });
+    });
+
+    it('it should fail to delete location for locationId that does not exist', (done) => {
+      superRequest.delete('/api/location?locationId=9999')
+        .set({ 'content-type': 'application/json' })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Location not found');
+          done();
+        });
+    });
+
+    it('it should fail to delete location for locationId with invalid type', (done) => {
+      superRequest.delete('/api/location?locationId="invalid"')
+        .set({ 'content-type': 'application/json' })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Parameter locationId not valid');
+          done();
+        });
+    });
+  });
 });

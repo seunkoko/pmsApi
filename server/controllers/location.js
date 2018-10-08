@@ -113,4 +113,45 @@ module.exports = {
       updateLocation(req, res, locationId, locationInput);
     }
   },
+  delete(req, res) {
+    if (isNaN(parseInt(req.query.locationId))) {
+      return res.status(400).send({
+        status: 'fail',
+        data: {
+          message: 'Parameter locationId not valid'
+        }
+      }); 
+    }
+
+    return Location
+    .findById(parseInt(req.query.locationId))
+    .then(location => {
+      if (!location) {
+        return res.status(404).send({
+          status: 'fail',
+          data: {
+            message: 'Location not found',
+          }
+        });
+      }
+
+      return location
+        .destroy()
+        .then(() => res.status(200).send({
+          status: 'success',
+          data: {
+            message: 'location successfully deleted',
+            location: {},
+          }
+        }))
+        .catch(error => res.status(400).send({
+          status: 'fail',
+          data: { error },
+        }));
+    })
+    .catch(error => res.status(400).send({
+      status: 'fail',
+      data: { error },
+    }));
+  },
 };
