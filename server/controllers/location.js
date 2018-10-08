@@ -52,4 +52,27 @@ module.exports = {
     const locationId = parseInt(req.query.locationId);
     getOneLocation(req, res, locationId);
   },
+  getAll(req, res) {
+    return Location
+    .all({
+      include: [
+        { model: LocationInfo, as: 'locationInfo', nested: 'true'}
+      ],
+    })
+    .then(locations => {
+      return res.status(200).send({
+        status: 'success',
+        data: {
+          message: 'Locations successfully retrieved',
+          locations,
+        }
+      });
+    })
+    .catch(error => res.status(400).send({
+      status: 'fail',
+      data: {
+        error
+      }
+    }));
+  },
 };

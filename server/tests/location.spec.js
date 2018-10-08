@@ -218,4 +218,20 @@ describe('LOCATION API', () => {
         });
     });
   });
+
+  describe('GET All Locations GET /api/locations', () => {
+
+    it('it should get all locations successfully', (done) => {
+      superRequest.get('/api/locations')
+        .set({ 'content-type': 'application/json' })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.status).to.equal('success');
+          expect(res.body.data.message).to
+            .equal('Locations successfully retrieved');
+          expect(res.body.data.locations.length).to.be.greaterThan(0);
+          done();
+        });
+    });
+  });
 });
