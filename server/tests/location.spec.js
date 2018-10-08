@@ -175,4 +175,47 @@ describe('LOCATION API', () => {
     });
   });
 
+  describe('GET Location GET /api/location', () => {
+
+    it('it should get a location when the locationId is valid', (done) => {
+      superRequest.get(`/api/location?locationId=${testLocation1.id}`)
+        .set({ 'content-type': 'application/json' })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.status).to.equal('success');
+          expect(res.body.data.message).to
+            .equal('Location successfully retrieved');
+          expect(res.body.data.location.name).to.equal(testLocation1.name);
+          expect(res.body.data.location.totalFemale).to.equal(testLocationInfo1.totalFemale);
+          expect(res.body.data.location.totalMale).to.equal(testLocationInfo1.totalMale);
+          expect(res.body.data.location.totalPopulation).to.equal(testLocationInfo1.totalPopulation);
+          expect(res.body.data.location.locationId).to.equal(testLocation1.id);
+          done();
+        });
+    });
+
+    it('it should not get a location when the locationId is not a valid number', (done) => {
+      superRequest.get('/api/location?locationId="invalid"')
+        .set({ 'content-type': 'application/json' })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Parameter locationId not valid');
+          done();
+        });
+    });
+
+    it('it should not get a location when the locationId does not exist', (done) => {
+      superRequest.get('/api/location?locationId=99999')
+        .set({ 'content-type': 'application/json' })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Location not found');
+          done();
+        });
+    });
+  });
 });

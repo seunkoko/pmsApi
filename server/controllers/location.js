@@ -4,6 +4,7 @@ import {
 } from '../middlewares/validation';
 import {
   createLocation,
+  getOneLocation,
 } from '../middlewares/location';
 
 const Location = require('../models').Location;
@@ -37,5 +38,18 @@ module.exports = {
     } else {
       createLocation(req, res, locationInput);
     }
+  },
+  getOne(req, res) {
+    if (isNaN(parseInt(req.query.locationId))) {
+      return res.status(400).send({
+        status: 'fail',
+        data: {
+          message: 'Parameter locationId not valid'
+        }
+      }); 
+    }
+
+    const locationId = parseInt(req.query.locationId);
+    getOneLocation(req, res, locationId);
   },
 };
