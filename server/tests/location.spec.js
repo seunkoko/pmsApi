@@ -234,4 +234,58 @@ describe('LOCATION API', () => {
         });
     });
   });
+
+  describe('EDIT Location PUT /api/location', () => {
+
+    it('it should edit a single location successfully', (done) => {
+      superRequest.put(`/api/location?locationId=${testLocation1.id}`)
+        .set({ 'content-type': 'application/json' })
+        .send({ 
+          name: 'Lagos State',
+          totalMale: 3000,
+          totalFemale: 4000
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.status).to.equal('success');
+          expect(res.body.data.message).to
+            .equal('Location updated successfully');
+          expect(res.body.data.location.locationInfo.name).to.equal('Lagos State');
+          expect(res.body.data.location.locationId).to.equal(testLocation1.id);
+          expect(res.body.data.location.totalFemale).to.equal(4000);
+          expect(res.body.data.location.totalMale).to.equal(3000);
+          done();
+        });
+    });
+
+    it('it should fail to edit location for locationId that does not exist', (done) => {
+      superRequest.put('/api/location?locationId=9999')
+        .set({ 'content-type': 'application/json' })
+        .send({ 
+          name: 'Lagos State'
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Location not found');
+          done();
+        });
+    });
+
+    it('it should fail to edit location for locationId with invalid type', (done) => {
+      superRequest.put('/api/location?locationId="invalid"')
+        .set({ 'content-type': 'application/json' })
+        .send({ 
+          name: 'Lagos State'
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Parameter locationId not valid');
+          done();
+        });
+    });
+  });
 });

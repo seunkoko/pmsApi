@@ -19,6 +19,7 @@ module.exports = (app) => {
     .route('/api/location')
     .post(locationController.create)
     .get(locationController.getOne)
+    .put(locationController.update)
 
   app
     .route('/api/locations')
