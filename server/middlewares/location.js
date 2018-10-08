@@ -117,6 +117,15 @@ module.exports = {
         });
       }
 
+      if (locationInput.parentLocationId && locationInput.parentLocationId === locationId) {
+        return res.status(400).send({
+          status: 'fail',
+          data: {
+            message: 'Location cannot be its own parent',
+          }
+        });
+      }
+
       const location = locationInfo.dataValues.locationInfo;
       const name = locationInput.name || location.name;
       const totalFemale = locationInput.totalFemale || locationInfo.totalFemale;

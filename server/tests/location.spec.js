@@ -99,6 +99,48 @@ describe('LOCATION API', () => {
         });
     });
 
+    it('it should not create a location with invalid parentLocation', (done) => {
+      superRequest.post('/api/location')
+        .set({ 'content-type': 'application/json' })
+        .send({
+          name: 'Akwa Ibom',
+          totalMale: 3000,
+          totalFemale: 10000,
+          parentLocationId: 9999
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Parent Location not found');
+          done();
+        });
+    });
+    
+    it('it should create a single location successfully with valid parentLocation', (done) => {
+      superRequest.post('/api/location')
+        .set({ 'content-type': 'application/json' })
+        .send({ 
+          name: 'Akwa Ibom',
+          totalMale: 3000,
+          totalFemale: 10000,
+          parentLocationId: testLocation1.id
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(201);
+          expect(res.body.status).to.equal('success');
+          expect(res.body.data.message).to
+            .equal('Location successfully created');
+          expect(res.body.data.location.name).to.equal('Akwa Ibom');
+          expect(res.body.data.location.totalFemale).to.equal(10000);
+          expect(res.body.data.location.totalMale).to.equal(3000);
+          expect(res.body.data.location.totalPopulation).to.equal(13000);
+          expect(res.body.data.location.parentLocationId).to.equal(testLocation1.id);
+          expect(res.body.data.location.parentLocation).to.equal(testLocation1.name);
+          done();
+        });
+    });
+
     it('it should not create a location when totalMale or totalFemale values are not supplied', (done) => {
       superRequest.post('/api/location')
         .set({ 'content-type': 'application/json' })
@@ -236,6 +278,53 @@ describe('LOCATION API', () => {
   });
 
   describe('EDIT Location PUT /api/location', () => {
+
+    it('it should not edit a location with its own locationId as parent', (done) => {
+      superRequest.put(`/api/location?locationId=${testLocation2.id}`)
+        .set({ 'content-type': 'application/json' })
+        .send({ 
+          parentLocationId: testLocation2.id
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(400);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Location cannot be its own parent');
+          done();
+        });
+    });
+
+    it('it should not edit a location with invalid parentLocation', (done) => {
+      superRequest.put(`/api/location?locationId=${testLocation2.id}`)
+        .set({ 'content-type': 'application/json' })
+        .send({ 
+          parentLocationId: 9999
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(404);
+          expect(res.body.status).to.equal('fail');
+          expect(res.body.data.message).to
+            .equal('Parent Location not found');
+          done();
+        });
+    });
+    
+    it('it should edit a single location successfully with parentLocation', (done) => {
+      superRequest.put(`/api/location?locationId=${testLocation2.id}`)
+        .set({ 'content-type': 'application/json' })
+        .send({ 
+          parentLocationId: testLocation1.id
+        })
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.status).to.equal('success');
+          expect(res.body.data.message).to
+            .equal('Location updated successfully');
+          expect(res.body.data.location.parentLocationId).to.equal(testLocation1.id);
+          expect(res.body.data.location.parentLocation).to.equal(testLocation1.name);
+          done();
+        });
+    });
 
     it('it should edit a single location successfully', (done) => {
       superRequest.put(`/api/location?locationId=${testLocation1.id}`)
