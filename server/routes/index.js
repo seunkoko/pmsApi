@@ -1,3 +1,5 @@
+const locationController = require('../controllers').location;
+
 const routes = {
   'api': 'GET /api - root url to display all routes for the PMS api',
   'create location': 'POST /api/location - body [name, totalFemale, totalMale, ^parentLocationId]',
@@ -12,4 +14,8 @@ module.exports = (app) => {
     message: 'Welcome to the PMS API!',
     routes,
   }));
+
+  app
+    .route('/api/location')
+    .post(locationController.create)
 };
