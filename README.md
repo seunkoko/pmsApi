@@ -55,8 +55,13 @@ GET /api/locations  | Gets all locations |
 - Change directory into the smsApi directory.
 - Install all necessary packages in the package.json file. Depending on if you are using `npm`, you can use the command below:
 > npm install
+- Create a postgresql database so as to supply credentials in the environment variables.
+- Set environment variables according the the .env.sample file
+- Run sequelize migrate command below:
+> sequelize db:migrate
 - Run the command below to start the application locally:
 > npm run start:dev
+- Test the routes above on POSTMAN or any other application of choice
 
 
 #### Contributing
